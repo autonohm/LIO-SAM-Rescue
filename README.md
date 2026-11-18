@@ -1,6 +1,9 @@
 # **AUTONOHM NoTes**
 
-- https://docs.ros.org/en/lyrical/Developer-Tools/Build/DDS-tuning.html dds tuning necessary
+Everything over TCP; otherwise, SLAM doesn't work because packets aren't being received.
+## TODO
+- fix UDP (https://docs.ros.org/en/lyrical/Developer-Tools/Build/DDS-tuning.html)
+
 
 
 # LIO-SAM

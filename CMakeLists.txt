@@ -71,8 +71,6 @@ configure_lio_sam_target(${PROJECT_NAME}_imageProjection)
 add_executable(${PROJECT_NAME}_imuPreintegration src/imuPreintegration.cpp)
 configure_lio_sam_target(${PROJECT_NAME}_imuPreintegration)
 
-add_executable(${PROJECT_NAME}_imuZReflection src/imuZReflection.cpp)
-configure_lio_sam_target(${PROJECT_NAME}_imuZReflection)
 
 add_executable(${PROJECT_NAME}_mapOptimization src/mapOptmization.cpp)
 configure_lio_sam_target(${PROJECT_NAME}_mapOptimization)
@@ -84,7 +82,6 @@ install(TARGETS
   ${PROJECT_NAME}_featureExtraction
   ${PROJECT_NAME}_imageProjection
   ${PROJECT_NAME}_imuPreintegration
-  ${PROJECT_NAME}_imuZReflection
   ${PROJECT_NAME}_mapOptimization
   DESTINATION lib/${PROJECT_NAME}
 )
