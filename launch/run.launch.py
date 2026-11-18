@@ -26,23 +26,20 @@ def generate_launch_description():
         Node(
             package='tf2_ros',
             executable='static_transform_publisher',
-            arguments='0.0 0.0 0.0 0.0 0.0 0.0 map odom'.split(' '),
-            parameters=[parameter_file],
+            name='base_to_velodyne_static_tf',
+            # M2DGR calibration: base_link (Handsfree IMU origin) to velodyne.
+            # The rotation is identity, represented by the normalized quaternion (0, 0, 0, 1).
+            arguments=[
+                '--x', '0.27255', '--y', '-0.00053', '--z', '0.17954',
+                '--roll', '0.0', '--pitch', '0.0', '--yaw', '0.0',
+                '--frame-id', 'base_link', '--child-frame-id', 'velodyne'
+            ],
             output='screen'
-            ),
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            parameters=[{
-                'robot_description': Command(['xacro', ' ', xacro_path])
-            }]
         ),
         Node(
             package='lio_sam',
             executable='lio_sam_imuPreintegration',
-            name='lio_sam_imuPreintegration',
+            #name='lio_sam_imuPreintegration', DONT REMOVE COMMENT: CAUSES NODES WITH DUPLICATE NAMES
             parameters=[parameter_file],
             output='screen'
         ),

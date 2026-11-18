@@ -1,10 +1,11 @@
 version: '3'
 services:
-  liosam-humble-jammy-container:
-    image: liosam-humble-jammy
-    container_name: liosam-humble-jammy-container
+  liosam-lyrical-container:
+    build: .
+    image: liosam-lyrical
+    container_name: liosam-lyrical-container
     privileged: true
-    hostname: liosam-humble-jammy-container
+    hostname: liosam-lyrical-container
     restart: always
     stdin_open: true
     tty: true

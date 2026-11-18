@@ -1,3 +1,8 @@
+# **AUTONOHM NoTes**
+
+- https://docs.ros.org/en/lyrical/Developer-Tools/Build/DDS-tuning.html dds tuning necessary
+
+
 # LIO-SAM
 
 **A real-time lidar-inertial odometry package. We strongly recommend the users read this document thoroughly and test the package with the provided dataset first. A video of the demonstration of the method can be found on [YouTube](https://www.youtube.com/watch?v=A0H8CoORZJU).**
@@ -69,8 +74,8 @@ In these tests, the IMU was mounted on the bottom of the lidar such that their x
 
 ## Dependencies
 
-Tested with ROS2 versions foxy and galactic on Ubuntu 20.04 and humble on Ubuntu 22.04
-- [ROS2](https://docs.ros.org/en/humble/Installation.html)
+Supported target: ROS 2 Lyrical on Ubuntu 26.04.
+- [ROS 2 Lyrical installation](https://docs.ros.org/en/lyrical/Installation.html)
   ```
   sudo apt install ros-<ros2-version>-perception-pcl \
 		   ros-<ros2-version>-pcl-msgs \
@@ -79,9 +84,7 @@ Tested with ROS2 versions foxy and galactic on Ubuntu 20.04 and humble on Ubuntu
   ```
 - [gtsam](https://gtsam.org/get_started) (Georgia Tech Smoothing and Mapping library)
   ```
-  # Add GTSAM-PPA
-  sudo add-apt-repository ppa:borglab/gtsam-release-4.1
-  sudo apt install libgtsam-dev libgtsam-unstable-dev
+  sudo apt install libgtsam-dev
   ```
 
 ## Install
@@ -99,10 +102,10 @@ Use the following commands to download and compile the package.
 
 ## Using Docker
 
-Build image (based on ROS2 Humble):
+Build image (based on ROS 2 Lyrical):
 
 ```
-docker build -t liosam-humble-jammy .
+docker build -t liosam-lyrical .
 ```
 
 Once you have the image, you can start a container by using one of the following methods:
@@ -111,13 +114,13 @@ Once you have the image, you can start a container by using one of the following
 
 ```
 docker run --init -it -d \
-  --name liosam-humble-jammy-container \
+  --name liosam-lyrical-container \
   -v /etc/localtime:/etc/localtime:ro \
   -v /etc/timezone:/etc/timezone:ro \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   -e DISPLAY=$DISPLAY \
   --runtime=nvidia --gpus all \
-  liosam-humble-jammy \
+  liosam-lyrical \
   bash
 ```
 
@@ -137,7 +140,7 @@ docker compose down
 To enter into the running container use:
 
 ```
-docker exec -it liosam-humble-jammy-container bash
+docker exec -it liosam-lyrical-container bash
 ```
 ## Prepare lidar data
 
@@ -167,7 +170,7 @@ The user needs to prepare the point cloud data in the correct format for cloud d
 
 For privacy reasons, no data set can currently be made available for ROS2.
 
-README.md of the master branch contains some links to ROS1 rosbags. It is possible to use [ros1_bridge](https://github.com/ros2/ros1_bridge) with these rosbags, but verify timing behavior (message frequency in ROS2) first. Mind [DDS tuning](https://docs.ros.org/en/humble/How-To-Guides/DDS-tuning.html).
+README.md of the master branch contains some links to ROS1 rosbags. It is possible to use [ros1_bridge](https://github.com/ros2/ros1_bridge) with these rosbags, but verify timing behavior (message frequency in ROS2) first. Mind [DDS tuning](https://docs.ros.org/en/lyrical/How-To-Guides/DDS-tuning.html).
 
 ## Run the package
 
