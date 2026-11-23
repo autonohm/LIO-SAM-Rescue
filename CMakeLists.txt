@@ -26,6 +26,7 @@ find_package(PCL REQUIRED)
 find_package(GTSAM REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(OpenMP REQUIRED)
+find_package(pointcloud_coregistration_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/CloudInfo.msg"
@@ -48,6 +49,7 @@ set(ROS_DEPENDENCY_TARGETS
   tf2_eigen::tf2_eigen
   tf2_sensor_msgs::tf2_sensor_msgs
   tf2_geometry_msgs::tf2_geometry_msgs
+  pointcloud_coregistration_msgs::pointcloud_coregistration_msgs
 )
 
 set(THIRD_PARTY_INCLUDE_DIRS ${PCL_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})

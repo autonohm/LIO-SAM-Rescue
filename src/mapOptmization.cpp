@@ -1,6 +1,7 @@
 #include "utility.hpp"
 #include "lio_sam/msg/cloud_info.hpp"
 #include "lio_sam/srv/save_map.hpp"
+#include "pointcloud_coregistration_msgs/msg/keyframe.hpp"
 #include <gtsam/geometry/Rot3.h>
 #include <gtsam/geometry/Pose3.h>
 #include <gtsam/slam/PriorFactor.h>
@@ -66,6 +67,8 @@ public:
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pubRecentKeyFrame;
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pubCloudRegisteredRaw;
     rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr pubLoopConstraintEdge;
+    //For Pointcloud Coregistration
+    rclcpp::Publisher<pointcloud_coregistration_msgs::msg::Keyframe>::SharedPtr pubNewKeyFrames;
 
     rclcpp::Service<lio_sam::srv::SaveMap>::SharedPtr srvSaveMap;
     rclcpp::Subscription<lio_sam::msg::CloudInfo>::SharedPtr subCloud;
@@ -238,6 +241,7 @@ public:
         pubHistoryKeyFrames = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam/mapping/icp_loop_closure_history_cloud", 1);
         pubIcpKeyFrames = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam/mapping/icp_loop_closure_history_cloud", 1);
         pubLoopConstraintEdge = create_publisher<visualization_msgs::msg::MarkerArray>("/lio_sam/mapping/loop_closure_constraints", 1);
+        pubNewKeyFrames = create_publisher<pointcloud_coregistration_msgs::msg::Keyframe>("lio_sam/new_keyframes", 10);
 
         pubRecentKeyFrames = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam/mapping/map_local", 1);
         pubRecentKeyFrame = create_publisher<sensor_msgs::msg::PointCloud2>("lio_sam/mapping/cloud_registered", 1);
@@ -1604,8 +1608,42 @@ public:
         cornerCloudKeyFrames.push_back(thisCornerKeyFrame);
         surfCloudKeyFrames.push_back(thisSurfKeyFrame);
 
+        //publish new keyframes for pointcloud coregistration
+        publishNewKeyFrame(thisPose6D, thisCornerKeyFrame, thisSurfKeyFrame);
         // save path for visualization
         updatePath(thisPose6D);
+    }
+
+    void publishNewKeyFrame(const PointTypePose &pose_in, 
+        pcl::PointCloud<PointType>::Ptr corner_points,
+        pcl::PointCloud<PointType>::Ptr surf_points){
+
+        pointcloud_coregistration_msgs::msg::Keyframe new_keyframe;
+        
+        //PCL
+        pcl::PointCloud<PointType>::Ptr combined(new pcl::PointCloud<PointType>());
+        *combined = *corner_points;
+        *combined += *surf_points;
+        pcl::toROSMsg(*combined, new_keyframe.cloud);
+        new_keyframe.cloud.header.stamp = rclcpp::Time(pose_in.time * 1e9);
+        //doesnt have a frame_id
+
+        //PoseStamped
+        geometry_msgs::msg::PoseStamped pose_stamped;
+        pose_stamped.header.stamp = rclcpp::Time(pose_in.time * 1e9);
+        pose_stamped.header.frame_id = odometryFrame;
+        pose_stamped.pose.position.x = pose_in.x;
+        pose_stamped.pose.position.y = pose_in.y;
+        pose_stamped.pose.position.z = pose_in.z;
+        tf2::Quaternion q;
+        q.setRPY(pose_in.roll, pose_in.pitch, pose_in.yaw);
+        pose_stamped.pose.orientation.x = q.x();
+        pose_stamped.pose.orientation.y = q.y();
+        pose_stamped.pose.orientation.z = q.z();
+        pose_stamped.pose.orientation.w = q.w();
+        new_keyframe.map_origin_to_local_transform = pose_stamped;
+
+        pubNewKeyFrames->publish(new_keyframe);
     }
 
     void correctPoses()

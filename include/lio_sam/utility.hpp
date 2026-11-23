@@ -33,6 +33,7 @@
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/crop_box.h>
 #include <pcl_conversions/pcl_conversions.h>
+#include <pcl_conversions/pcl_conversions.h>
 
 #include <tf2/LinearMath/Quaternion.hpp>
 #include <tf2_ros/transform_listener.hpp>

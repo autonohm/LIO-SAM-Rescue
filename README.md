@@ -1,9 +1,20 @@
-# **AUTONOHM NoTes**
+# **AUTONOHM Notes**
 
-Everything over TCP; otherwise, SLAM doesn't work because packets aren't being received.
+> [!IMPORTANT]
+> Use TCP transport. UDP can drop packets and prevent SLAM from working correctly.
+
 ## TODO
-- fix UDP (https://docs.ros.org/en/lyrical/Developer-Tools/Build/DDS-tuning.html)
 
+- [ ] Fix UDP transport  
+  - Reference: [ROS 2 DDS tuning guide](https://docs.ros.org/en/lyrical/Developer-Tools/Build/DDS-tuning.html)
+
+## Added Functionality
+
+- **New topic:** `lio_sam/new_keyframes`
+  - **Message type:** `pointcloud_coregistration::msg::Keyframe`
+  - **Transport:** TCP
+  - **Depth:** `10`
+  - Publishes new keyframes immediately after they are added to the SLAM factor graph.
 
 
 # LIO-SAM
