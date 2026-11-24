@@ -1628,19 +1628,22 @@ public:
         new_keyframe.cloud.header.stamp = rclcpp::Time(pose_in.time * 1e9);
         //doesnt have a frame_id
 
-        //PoseStamped
+        // PoseStamped (KF TO MAP)
         geometry_msgs::msg::PoseStamped pose_stamped;
         pose_stamped.header.stamp = rclcpp::Time(pose_in.time * 1e9);
         pose_stamped.header.frame_id = odometryFrame;
-        pose_stamped.pose.position.x = pose_in.x;
-        pose_stamped.pose.position.y = pose_in.y;
-        pose_stamped.pose.position.z = pose_in.z;
         tf2::Quaternion q;
         q.setRPY(pose_in.roll, pose_in.pitch, pose_in.yaw);
-        pose_stamped.pose.orientation.x = q.x();
-        pose_stamped.pose.orientation.y = q.y();
-        pose_stamped.pose.orientation.z = q.z();
-        pose_stamped.pose.orientation.w = q.w();
+        tf2::Transform pose_transform(q, tf2::Vector3(pose_in.x, pose_in.y, pose_in.z));
+        tf2::Vector3 position = pose_transform.getOrigin();
+        tf2::Quaternion orientation = pose_transform.getRotation();
+        pose_stamped.pose.position.x = position.x();
+        pose_stamped.pose.position.y = position.y();
+        pose_stamped.pose.position.z = position.z();
+        pose_stamped.pose.orientation.x = orientation.x();
+        pose_stamped.pose.orientation.y = orientation.y();
+        pose_stamped.pose.orientation.z = orientation.z();
+        pose_stamped.pose.orientation.w = orientation.w();
         new_keyframe.map_origin_to_local_transform = pose_stamped;
 
         pubNewKeyFrames->publish(new_keyframe);
